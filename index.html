@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#2C1810" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Cookbook" />
+  <meta name="description" content="My personal recipe book" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <title>My Cookbook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@400;700;900&family=Courier+Prime:wght@700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --espresso:  #2C1810;
+      --parchment: #F5ECD7;
+      --card-bg:   #FDF6E3;
+      --saddle:    #8B4513;
+      --gold:      #D4A96A;
+      --rust:      #6B3A2A;
+      --muted:     #9a7a5a;
+      --ink:       #3d2010;
+      --border:    #e8d8b8;
+      --safe-top: env(safe-area-inset-top, 0px);
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--parchment);
+      color: var(--espresso);
+      font-family: 'Lato', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      background: var(--espresso);
+      border-bottom: 3px solid var(--gold);
+      padding: calc(var(--safe-top) + 20px) 20px 18px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 3px;
+    }
+    .header-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 30px;
+      color: var(--parchment);
+      line-height: 1;
+      margin-bottom: 3px;
+    }
+    .header-rule {
+      width: 40px; height: 2px;
+      background: var(--gold);
+      margin-bottom: 14px;
+    }
+    .search-box {
+      width: 100%;
+      background: rgba(245,236,215,0.1);
+      border: 1.5px solid var(--rust);
+      border-radius: 3px;
+      padding: 9px 14px;
+      font-family: 'Lato', sans-serif;
+      font-size: 15px;
+      color: var(--parchment);
+      outline: none;
+      -webkit-appearance: none;
+    }
+    .search-box::placeholder { color: rgba(245,236,215,0.45); }
+    .search-box:focus { border-color: var(--gold); }
+
+    /* ── BACK BUTTON ── */
+    .back-btn {
+      background: none;
+      border: none;
+      color: var(--gold);
+      font-family: 'Lato', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      letter-spacing: 0.03em;
+    }
+
+    /* ── CONTENT ── */
+    .content {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+    }
+
+    /* ── RECIPE COUNT ── */
+    .recipe-count {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 18px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* ── RECIPE GRID ── */
+    .recipe-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    /* ── RECIPE CARD ── */
+    .recipe-card {
+      background: var(--card-bg);
+      border: 1.5px solid var(--gold);
+      border-radius: 3px;
+      padding: 20px 20px 16px;
+      cursor: pointer;
+      position: relative;
+      box-shadow: 2px 3px 10px rgba(44,24,16,0.10);
+      transition: transform 0.15s, box-shadow 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .recipe-card:active {
+      transform: scale(0.98);
+      box-shadow: 1px 2px 6px rgba(44,24,16,0.10);
+    }
+    .category-stamp {
+      position: absolute;
+      top: 12px; right: 12px;
+      border: 2px solid var(--saddle);
+      border-radius: 2px;
+      padding: 2px 7px;
+      font-size: 9px;
+      font-weight: 900;
+      color: var(--saddle);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      opacity: 0.65;
+      transform: rotate(2deg);
+    }
+    .card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      color: var(--espresso);
+      margin-bottom: 6px;
+      line-height: 1.2;
+      padding-right: 60px;
+    }
+    .card-desc {
+      font-size: 13px;
+      color: var(--rust);
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+    .card-meta {
+      display: flex;
+      gap: 16px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    /* ── EMPTY STATE ── */
+    .empty {
+      text-align: center;
+      padding: 60px 0;
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-style: italic;
+      color: var(--muted);
+    }
+
+    /* ── RECIPE DETAIL ── */
+    .detail-stamp {
+      display: inline-block;
+      border: 2px solid var(--saddle);
+      border-radius: 2px;
+      padding: 2px 9px;
+      font-size: 9px;
+      font-weight: 900;
+      color: var(--saddle);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      opacity: 0.65;
+      transform: rotate(-1deg);
+      margin-bottom: 10px;
+    }
+    .detail-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 30px;
+      color: var(--espresso);
+      margin-bottom: 8px;
+      line-height: 1.15;
+    }
+    .detail-desc {
+      font-size: 14px;
+      color: var(--rust);
+      margin-bottom: 14px;
+      line-height: 1.6;
+    }
+    .detail-meta {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 22px;
+    }
+
+    /* ── SCALER ── */
+    .scaler {
+      background: var(--card-bg);
+      border: 1.5px solid var(--gold);
+      border-radius: 3px;
+      padding: 12px 16px;
+      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .scaler-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--espresso);
+    }
+    .scaler-btn {
+      width: 30px; height: 30px;
+      border: 1.5px solid var(--gold);
+      background: #fff;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 18px;
+      color: var(--saddle);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+      flex-shrink: 0;
+    }
+    .scaler-btn:active { background: var(--gold); }
+    .scaler-count {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      color: var(--espresso);
+      min-width: 28px;
+      text-align: center;
+    }
+    .scaler-orig {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* ── TABS ── */
+    .tabs {
+      display: flex;
+      border-bottom: 2px solid var(--gold);
+      margin-bottom: 22px;
+    }
+    .tab-btn {
+      background: transparent;
+      border: none;
+      border-radius: 3px 3px 0 0;
+      padding: 8px 20px;
+      cursor: pointer;
+      font-family: 'Lato', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.15s, color 0.15s;
+    }
+    .tab-btn.active {
+      background: var(--gold);
+      color: var(--espresso);
+    }
+
+    /* ── INGREDIENTS PANEL ── */
+    .ingredients-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 16px 18px;
+      margin-bottom: 26px;
+    }
+    .ingredients-panel h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      color: var(--espresso);
+      margin-bottom: 12px;
+    }
+    .ingredient-item {
+      font-size: 13px;
+      color: var(--ink);
+      padding: 3px 0;
+    }
+    .ingredient-item strong { color: var(--espresso); }
+
+    /* ── STEPS ── */
+    .step {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 18px;
+      padding-bottom: 18px;
+      border-bottom: 1px dashed var(--border);
+    }
+    .step:last-child { border-bottom: none; }
+    .step-num {
+      flex-shrink: 0;
+      width: 28px; height: 28px;
+      background: var(--saddle);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 13px;
+      color: var(--card-bg);
+      font-weight: 700;
+      margin-top: 2px;
+    }
+    .step-body { flex: 1; }
+    .step-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      color: var(--espresso);
+      margin-bottom: 5px;
+    }
+    .step-text {
+      font-size: 14px;
+      color: var(--ink);
+      line-height: 1.65;
+    }
+
+    /* ── TIMER ── */
+    .timer-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+    .timer-start-btn {
+      border: none;
+      border-radius: 4px;
+      padding: 5px 13px;
+      font-family: 'Lato', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      -webkit-tap-highlight-color: transparent;
+      transition: opacity 0.1s;
+    }
+    .timer-start-btn:active { opacity: 0.8; }
+    .timer-display {
+      font-family: 'Courier Prime', monospace;
+      font-size: 15px;
+      font-weight: 700;
+      min-width: 52px;
+    }
+    .timer-reset {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 13px;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ── SHOPPING LIST ── */
+    .shopping-header {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      color: var(--espresso);
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--gold);
+    }
+    .shopping-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px dashed var(--border);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: opacity 0.15s;
+    }
+    .shopping-item.checked {
+      opacity: 0.4;
+      text-decoration: line-through;
+    }
+    .checkbox {
+      width: 18px; height: 18px;
+      border: 1.5px solid var(--saddle);
+      border-radius: 2px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      transition: background 0.15s;
+    }
+    .checkbox.checked { background: var(--saddle); }
+    .checkbox-tick { color: #fff; font-size: 11px; line-height: 1; }
+    .shopping-text { font-size: 14px; color: var(--espresso); }
+    .shopping-text strong { color: var(--espresso); }
+    .clear-btn {
+      margin-top: 16px;
+      background: none;
+      border: 1px solid var(--gold);
+      color: var(--rust);
+      font-family: 'Lato', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 16px;
+      cursor: pointer;
+      border-radius: 3px;
+      letter-spacing: 0.04em;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .clear-btn:active { background: var(--gold); }
+
+    @media (min-width: 600px) {
+      .content { padding: 32px 24px 80px; }
+      .recipe-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 3px 6px 16px rgba(44,24,16,0.16);
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script src="recipes.js"></script>
+<script>
+// ── UTILITIES ────────────────────────────────────────────────
+
+function fmtTime(s) {
+  return String(Math.floor(s/60)).padStart(2,'0') + ':' + String(s%60).padStart(2,'0');
+}
+
+function scaleAmt(amount, scale) {
+  const n = Math.round(amount * scale * 100) / 100;
+  const fracs = {0.25:'¼',0.5:'½',0.75:'¾',0.33:'⅓',0.67:'⅔'};
+  const whole = Math.floor(n);
+  const frac  = Math.round((n - whole) * 100) / 100;
+  if (frac === 0) return String(whole);
+  const fs = fracs[frac];
+  return whole > 0 ? `${whole}${fs ? ' '+fs : ''}` : (fs || n.toFixed(2));
+}
+
+// ── STATE ────────────────────────────────────────────────────
+
+let state = {
+  view: 'list',       // 'list' | 'detail'
+  search: '',
+  selectedId: null,
+  serves: null,       // set when detail opens
+  tab: 'method',      // 'method' | 'shopping'
+  checked: {},        // shopping list checkboxes
+  timers: {},         // { stepIndex: { remaining, running, done } }
+};
+
+function setState(patch) {
+  Object.assign(state, patch);
+  render();
+}
+
+// ── TIMERS ───────────────────────────────────────────────────
+
+const intervals = {};
+
+function startTimer(i, total) {
+  if (intervals[i]) return;
+  intervals[i] = setInterval(() => {
+    const t = state.timers[i];
+    if (!t || !t.running) { clearInterval(intervals[i]); delete intervals[i]; return; }
+    const next = t.remaining - 1;
+    if (next <= 0) {
+      clearInterval(intervals[i]); delete intervals[i];
+      state.timers = { ...state.timers, [i]: { remaining: 0, running: false, done: true } };
+      render();
+      // Vibrate on done
+      if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+    } else {
+      state.timers = { ...state.timers, [i]: { ...t, remaining: next } };
+      render();
+    }
+  }, 1000);
+}
+
+function toggleTimer(i, total) {
+  const t = state.timers[i] || { remaining: total, running: false, done: false };
+  if (t.done) return;
+  const next = { ...t, running: !t.running };
+  state.timers = { ...state.timers, [i]: next };
+  render();
+  if (next.running) startTimer(i, total);
+  else { clearInterval(intervals[i]); delete intervals[i]; }
+}
+
+function resetTimer(i, total) {
+  clearInterval(intervals[i]); delete intervals[i];
+  state.timers = { ...state.timers, [i]: { remaining: total, running: false, done: false } };
+  render();
+}
+
+// ── RENDER HELPERS ───────────────────────────────────────────
+
+function h(tag, attrs, ...children) {
+  const el = document.createElement(tag);
+  if (attrs) {
+    Object.entries(attrs).forEach(([k, v]) => {
+      if (k === 'className') el.className = v;
+      else if (k.startsWith('on')) el[k.toLowerCase()] = v;
+      else el.setAttribute(k, v);
+    });
+  }
+  children.flat().forEach(c => {
+    if (c == null) return;
+    el.appendChild(typeof c === 'string' ? document.createTextNode(c) : c);
+  });
+  return el;
+}
+
+// ── COMPONENTS ───────────────────────────────────────────────
+
+function TimerButton(stepIndex, seconds) {
+  const t = state.timers[stepIndex] || { remaining: seconds, running: false, done: false };
+  const btnColor = t.done ? '#5a8a3c' : t.running ? '#8B4513' : '#D4A96A';
+  const btnText  = t.done ? '✓ Done' : t.running ? '⏸ Pause' : '▶ Start';
+  const dispColor = t.done ? '#5a8a3c' : t.running ? '#8B4513' : '#6B3A2A';
+
+  const btn = h('button', {
+    className: 'timer-start-btn',
+    style: `background:${btnColor};color:${t.done?'#fff':'#2C1810'}`,
+    onClick: () => toggleTimer(stepIndex, seconds)
+  }, btnText);
+
+  const disp = h('span', {
+    className: 'timer-display',
+    style: `color:${dispColor}`
+  }, fmtTime(t.remaining));
+
+  const row = h('div', { className: 'timer-row' }, btn, disp);
+
+  if (t.running || t.done || t.remaining !== seconds) {
+    const rst = h('button', {
+      className: 'timer-reset',
+      onClick: (e) => { e.stopPropagation(); resetTimer(stepIndex, seconds); }
+    }, '↺ Reset');
+    row.appendChild(rst);
+  }
+  return row;
+}
+
+function RecipeCard(recipe) {
+  const card = h('div', { className: 'recipe-card', onClick: () => openDetail(recipe.id) },
+    h('div', { className: 'category-stamp' }, recipe.category),
+    h('h2', { className: 'card-title' }, recipe.title),
+    h('p', { className: 'card-desc' }, recipe.description),
+    h('div', { className: 'card-meta' },
+      h('span', {}, '⏱ ' + recipe.time),
+      h('span', {}, '👤 Serves ' + recipe.serves)
+    )
+  );
+  return card;
+}
+
+function ListView() {
+  const filtered = RECIPES.filter(r =>
+    r.title.toLowerCase().includes(state.search.toLowerCase()) ||
+    r.category.toLowerCase().includes(state.search.toLowerCase())
+  );
+
+  const grid = filtered.length === 0
+    ? h('div', { className: 'empty' }, `No recipes found for "${state.search}"`)
+    : h('div', { className: 'recipe-grid' }, ...filtered.map(RecipeCard));
+
+  return h('div', {},
+    h('p', { className: 'recipe-count' }, filtered.length + (filtered.length === 1 ? ' recipe' : ' recipes')),
+    grid
+  );
+}
+
+function ShoppingView(recipe, scale) {
+  const items = recipe.ingredients.map((ing, i) => {
+    const isChecked = !!state.checked[i];
+    const cb = h('div', { className: 'checkbox' + (isChecked ? ' checked' : '') },
+      isChecked ? h('span', { className: 'checkbox-tick' }, '✓') : null
+    );
+    const txt = h('span', { className: 'shopping-text' },
+      h('strong', {}, scaleAmt(ing.amount, scale) + (ing.unit ? ' ' + ing.unit : '') + ' '),
+      ing.name
+    );
+    const row = h('div', { className: 'shopping-item' + (isChecked ? ' checked' : ''), onClick: () => toggleCheck(i) }, cb, txt);
+    return row;
+  });
+
+  const clearBtn = h('button', { className: 'clear-btn', onClick: clearChecks }, 'Clear all');
+
+  return h('div', {},
+    h('h3', { className: 'shopping-header' }, 'Shopping List'),
+    ...items,
+    clearBtn
+  );
+}
+
+function MethodView(recipe, scale) {
+  // Ingredients summary
+  const ingItems = recipe.ingredients.map(ing =>
+    h('div', { className: 'ingredient-item' },
+      h('strong', {}, scaleAmt(ing.amount, scale) + (ing.unit ? ' ' + ing.unit : '') + ' '),
+      ing.name
+    )
+  );
+  const ingPanel = h('div', { className: 'ingredients-panel' },
+    h('h3', {}, 'Ingredients'),
+    h('div', { style: 'columns:2;column-gap:20px' }, ...ingItems)
+  );
+
+  // Steps
+  const steps = recipe.steps.map((step, i) => {
+    const body = h('div', { className: 'step-body' },
+      h('div', { className: 'step-title' }, step.title),
+      h('p', { className: 'step-text' }, step.text),
+      step.timer ? TimerButton(i, step.timer) : null
+    );
+    return h('div', { className: 'step' },
+      h('div', { className: 'step-num' }, String(i + 1)),
+      body
+    );
+  });
+
+  return h('div', {}, ingPanel, ...steps);
+}
+
+function DetailView(recipe) {
+  const serves = state.serves;
+  const scale  = serves / recipe.serves;
+
+  const header = h('div', {},
+    h('div', { className: 'detail-stamp' }, recipe.category),
+    h('h1', { className: 'detail-title' }, recipe.title),
+    h('p', { className: 'detail-desc' }, recipe.description),
+    h('div', { className: 'detail-meta' }, '⏱ ' + recipe.time)
+  );
+
+  const scaler = h('div', { className: 'scaler' },
+    h('span', { className: 'scaler-label' }, 'Serves'),
+    h('button', { className: 'scaler-btn', onClick: () => changeServes(-1) }, '−'),
+    h('span', { className: 'scaler-count' }, String(serves)),
+    h('button', { className: 'scaler-btn', onClick: () => changeServes(1) }, '+'),
+    serves !== recipe.serves ? h('span', { className: 'scaler-orig' }, `(original: ${recipe.serves})`) : null
+  );
+
+  const tabs = h('div', { className: 'tabs' },
+    h('button', { className: 'tab-btn' + (state.tab === 'method' ? ' active' : ''), onClick: () => setState({ tab: 'method' }) }, 'Method'),
+    h('button', { className: 'tab-btn' + (state.tab === 'shopping' ? ' active' : ''), onClick: () => setState({ tab: 'shopping' }) }, 'Shopping List')
+  );
+
+  const body = state.tab === 'method' ? MethodView(recipe, scale) : ShoppingView(recipe, scale);
+
+  return h('div', {}, header, scaler, tabs, body);
+}
+
+// ── ACTIONS ──────────────────────────────────────────────────
+
+function openDetail(id) {
+  const recipe = RECIPES.find(r => r.id === id);
+  state.timers  = {};
+  state.checked = {};
+  Object.values(intervals).forEach(clearInterval);
+  Object.keys(intervals).forEach(k => delete intervals[k]);
+  setState({ view: 'detail', selectedId: id, serves: recipe.serves, tab: 'method' });
+}
+
+function goBack() {
+  Object.values(intervals).forEach(clearInterval);
+  Object.keys(intervals).forEach(k => delete intervals[k]);
+  setState({ view: 'list', selectedId: null });
+}
+
+function changeServes(delta) {
+  const next = Math.max(1, state.serves + delta);
+  setState({ serves: next });
+}
+
+function toggleCheck(i) {
+  setState({ checked: { ...state.checked, [i]: !state.checked[i] } });
+}
+
+function clearChecks() {
+  setState({ checked: {} });
+}
+
+// ── MAIN RENDER ──────────────────────────────────────────────
+
+function render() {
+  const app = document.getElementById('app');
+  app.innerHTML = '';
+
+  const isDetail = state.view === 'detail';
+  const recipe   = isDetail ? RECIPES.find(r => r.id === state.selectedId) : null;
+
+  // Header
+  const headerInner = isDetail
+    ? h('div', {},
+        h('div', { className: 'header-eyebrow' }, 'My'),
+        h('h1', { className: 'header-title' }, 'Cookbook'),
+        h('div', { className: 'header-rule' }),
+        h('button', { className: 'back-btn', onClick: goBack }, '← Back to cookbook')
+      )
+    : h('div', {},
+        h('div', { className: 'header-eyebrow' }, 'My'),
+        h('h1', { className: 'header-title' }, 'Cookbook'),
+        h('div', { className: 'header-rule' }),
+        (() => {
+          const inp = h('input', {
+            className: 'search-box',
+            type: 'text',
+            placeholder: 'Search recipes…',
+            value: state.search,
+            onInput: (e) => { state.search = e.target.value; render(); }
+          });
+          return inp;
+        })()
+      );
+
+  const header = h('div', { className: 'header' }, headerInner);
+
+  // Body
+  const body = isDetail ? DetailView(recipe) : ListView();
+  const content = h('div', { className: 'content' }, body);
+
+  app.appendChild(header);
+  app.appendChild(content);
+}
+
+// ── INIT ─────────────────────────────────────────────────────
+
+render();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
