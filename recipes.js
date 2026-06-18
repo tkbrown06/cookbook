@@ -3,7 +3,7 @@
 //  To add a new recipe, copy the template at the bottom
 //  and paste it into the RECIPES array.
 // ============================================================
-
+ 
 const RECIPES = [
   {
     id: 1,
@@ -56,7 +56,7 @@ const RECIPES = [
       { title: "Make the tarka & serve", text: "Heat ghee in a small pan until foaming. Add cumin seeds and dried red chilli. Sizzle 30 seconds until seeds pop. Pour sizzling tarka over the dish and serve immediately with basmati rice or naan.", timer: 30 }
     ]
   },
-
+ 
   {
     id: 2,
     title: "Ramen Chicken Meatballs",
@@ -85,12 +85,42 @@ const RECIPES = [
       { title: "Serve", text: "Assemble your ramen bowls with noodles and broth, then add 4–6 meatballs per bowl. Garnish with extra sliced green onion and a drizzle of sesame oil if desired.", timer: null }
     ]
   }
-
+ 
+  ,{
+    id: 3,
+    title: "Herb & Raisin Dutch Oven Bread",
+    category: "Bread",
+    serves: 8,
+    time: "~14 hrs (mostly rising)",
+    description: "A rustic no-knead Dutch oven bread made with whole wheat flour, fresh herbs, and sweet raisins — crusty outside, soft and fragrant inside.",
+    ingredients: [
+      { amount: 2, unit: "cup", name: "whole wheat flour" },
+      { amount: 1.5, unit: "cup", name: "all-purpose flour" },
+      { amount: 1, unit: "tsp", name: "instant or active dry yeast" },
+      { amount: 1.5, unit: "tsp", name: "salt" },
+      { amount: 0.75, unit: "cup", name: "raisins" },
+      { amount: 1, unit: "tbsp", name: "fresh rosemary, finely chopped" },
+      { amount: 1, unit: "tbsp", name: "fresh thyme leaves" },
+      { amount: 1, unit: "tbsp", name: "honey" },
+      { amount: 1.5, unit: "cup", name: "warm water" },
+      { amount: 1, unit: "tsp", name: "olive oil, for greasing" }
+    ],
+    steps: [
+      { title: "Mix the dough", text: "Whisk together whole wheat flour, all-purpose flour, yeast, and salt. Stir in raisins, rosemary, and thyme. Dissolve honey into warm water, then pour into the dry ingredients. Stir until a shaggy, sticky dough forms — no need to knead.", timer: null },
+      { title: "First rise", text: "Cover the bowl with a damp towel or plastic wrap. Let it rise at room temperature for 12–18 hours, until doubled in size and covered in bubbles.", timer: 43200 },
+      { title: "Shape the loaf", text: "Turn the dough out onto a lightly floured surface. With floured hands, fold the edges into the center a few times to form a rough ball. Place on parchment paper, cover loosely, and let it rest while the oven preheats.", timer: 1800 },
+      { title: "Preheat the Dutch oven", text: "Place your Dutch oven (with lid on) into the oven and preheat to 450°F (230°C) for at least 30 minutes.", timer: 1800 },
+      { title: "Bake covered", text: "Carefully remove the hot Dutch oven. Using the parchment paper as a sling, lower the dough into the pot. Cover with the lid and bake for 30 minutes.", timer: 1800 },
+      { title: "Bake uncovered", text: "Remove the lid and bake for another 12–15 minutes, until the crust is deep golden brown and the loaf sounds hollow when tapped on the bottom.", timer: 900 },
+      { title: "Cool before slicing", text: "Lift the bread out onto a wire rack using the parchment paper. Let it cool for at least 30 minutes before slicing.", timer: 1800 }
+    ]
+  }
+ 
   // ── ADD NEW RECIPES BELOW THIS LINE ─────────────────────────
   //
   // Template:
   // ,{
-  //   id: 3,                          // increment for each new recipe
+  //   id: 4,                          // increment for each new recipe
   //   title: "Recipe Name",
   //   category: "Category",           // e.g. Curry, Pasta, Baking, Soup
   //   serves: 4,
@@ -107,3 +137,4 @@ const RECIPES = [
   //   ]
   // }
 ];
+ 
